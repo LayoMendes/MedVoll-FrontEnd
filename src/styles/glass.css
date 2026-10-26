@@ -1,0 +1,358 @@
+/* =========================================================================
+   Liquid glass
+   Superfícies translúcidas que desfocam e saturam o que está atrás, com uma
+   borda de luz no topo (reflexo) e um brilho suave descendo pela peça.
+   Nas páginas internas, um fundo com manchas de cor dá algo para o vidro
+   refratar. Sem suporte a backdrop-filter, ou com "reduzir transparência"
+   ativado no sistema, valem as superfícies sólidas de global.css.
+   ========================================================================= */
+
+:root {
+  --glass: rgba(255, 255, 255, 0.46);
+  --glass-strong: rgba(255, 255, 255, 0.64);
+  --glass-thin: rgba(255, 255, 255, 0.3);
+  --glass-blur: blur(26px) saturate(200%) brightness(1.04);
+  /* reflexo especular no canto superior esquerdo + brilho descendo pela peça */
+  --glass-sheen:
+    radial-gradient(130% 90% at 0% 0%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 42%);
+  /* borda de luz em cima, linha clara em volta e refração azulada no rodapé */
+  --glass-rim:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 1px 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 -14px 24px -18px rgba(74, 148, 235, 0.45);
+  --glass-edge: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 10px 30px -10px rgba(30, 64, 120, 0.22), 0 1px 2px rgba(15, 23, 42, 0.05);
+  --glass-shadow-lg: 0 30px 60px -16px rgba(30, 64, 120, 0.35);
+  --backdrop:
+    radial-gradient(900px 600px at 88% -8%, rgba(121, 185, 242, 0.55), transparent 60%),
+    radial-gradient(700px 520px at 6% 104%, rgba(169, 221, 248, 0.7), transparent 62%),
+    radial-gradient(560px 420px at 46% 52%, rgba(196, 214, 255, 0.45), transparent 70%),
+    linear-gradient(180deg, #f3f7fc 0%, #e9f1fa 100%);
+}
+
+[data-theme='dark'] {
+  --glass: rgba(24, 36, 58, 0.42);
+  --glass-strong: rgba(18, 28, 46, 0.64);
+  --glass-thin: rgba(30, 44, 70, 0.28);
+  --glass-blur: blur(28px) saturate(170%);
+  --glass-sheen:
+    radial-gradient(130% 90% at 0% 0%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 42%);
+  --glass-rim:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 1px 0 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 -14px 24px -18px rgba(121, 185, 242, 0.3);
+  --glass-edge: rgba(0, 0, 0, 0.35);
+  --glass-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  --glass-shadow-lg: 0 30px 60px -16px rgba(0, 0, 0, 0.7);
+  --backdrop:
+    radial-gradient(900px 600px at 88% -8%, rgba(74, 148, 235, 0.3), transparent 60%),
+    radial-gradient(700px 520px at 6% 104%, rgba(56, 160, 230, 0.18), transparent 62%),
+    radial-gradient(560px 420px at 46% 52%, rgba(99, 102, 241, 0.1), transparent 70%),
+    linear-gradient(180deg, #0a111e 0%, #0b1424 100%);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @media not (prefers-reduced-transparency: reduce) {
+    .app:not(.app--home) {
+      background: var(--backdrop);
+      background-attachment: fixed;
+    }
+
+    /* peças de vidro */
+    .sidebar,
+    .card,
+    .modal,
+    .toast,
+    .combo__list,
+    .hero__weather,
+    .quick__item,
+    .collapse-btn,
+    .theme-card {
+      background: var(--glass-sheen), var(--glass);
+      border-color: var(--glass-edge);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-rim), var(--glass-shadow);
+    }
+
+    .sidebar {
+      background: var(--glass-sheen), var(--glass-strong);
+      border-right-color: var(--glass-edge);
+      box-shadow: var(--glass-rim);
+    }
+
+    .modal,
+    .combo__list {
+      background: var(--glass-sheen), var(--glass-strong);
+      box-shadow: var(--glass-rim), var(--glass-shadow-lg);
+    }
+
+    .card {
+      border-radius: 18px;
+    }
+
+    .modal {
+      border-radius: 22px;
+    }
+
+    .toast {
+      border-radius: 18px;
+      box-shadow: var(--glass-rim), var(--glass-shadow-lg);
+    }
+
+    .modal__foot {
+      background: var(--glass-thin);
+    }
+
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.28);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .scrim {
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+
+    .theme-card[aria-checked='true'] {
+      box-shadow: var(--glass-rim), var(--ring);
+    }
+
+    /* barra superior no celular */
+    @media (max-width: 960px) {
+      .mobilebar {
+        background: var(--glass-strong);
+        border-bottom-color: var(--glass-edge);
+        -webkit-backdrop-filter: var(--glass-blur);
+        backdrop-filter: var(--glass-blur);
+      }
+      .app--home .mobilebar {
+        background: transparent;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+    }
+
+    /* item ativo do menu, abas e dia selecionado: pílula de vidro tingida */
+    .nav__active-bg,
+    .tab-v__bg,
+    .day__bg {
+      background: var(--glass-sheen), color-mix(in srgb, var(--accent) 16%, var(--glass-strong));
+      box-shadow: var(--glass-rim), 0 4px 14px -6px rgba(47, 118, 210, 0.35);
+    }
+
+    .nav__link:hover,
+    .tab-v:hover,
+    .upcoming__item:hover,
+    .day:hover {
+      background: var(--glass-thin);
+    }
+
+    .nav__link.is-active:hover,
+    .tab-v[aria-selected='true']:hover {
+      background: transparent;
+    }
+
+    /* controles segmentados: trilho afundado e pílula elevada */
+    .segmented {
+      background: var(--glass-thin);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08), inset 0 0 0 1px var(--glass-edge);
+    }
+
+    .segmented__pill,
+    [data-theme='dark'] .segmented__pill {
+      background: var(--glass-sheen), var(--glass-strong);
+      box-shadow: var(--glass-rim), 0 2px 8px -2px rgba(15, 23, 42, 0.18);
+    }
+
+    /* botões em cápsula com reflexo no topo */
+    .btn {
+      border-radius: 999px;
+      padding: 0 16px;
+    }
+
+    .btn--sm {
+      padding: 0 12px;
+    }
+
+    .btn--primary {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%), var(--primary);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+        0 6px 16px -6px rgba(47, 118, 210, 0.55);
+    }
+
+    .btn--primary:hover:not(:disabled) {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0) 55%), var(--primary-hover);
+    }
+
+    .btn--ghost {
+      background: var(--glass-sheen), var(--glass);
+      border-color: var(--glass-edge);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-rim), 0 2px 6px -2px rgba(15, 23, 42, 0.12);
+    }
+
+    .btn--ghost:hover:not(:disabled) {
+      background: var(--glass-sheen), var(--glass-strong);
+    }
+
+    .icon-btn {
+      border-radius: 999px;
+    }
+
+    .icon-btn:hover {
+      background: var(--glass-thin);
+      box-shadow: var(--glass-rim);
+    }
+
+    /* campos levemente translúcidos */
+    .input,
+    .select,
+    .textarea {
+      background-color: var(--glass-strong);
+      border-color: var(--glass-edge);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: var(--accent);
+      box-shadow: var(--ring);
+    }
+
+    .input[aria-invalid='true'],
+    .select[aria-invalid='true'] {
+      border-color: var(--danger);
+    }
+
+    /* pequenos elementos internos */
+    .stat__icon,
+    .quick__icon,
+    .empty__icon,
+    .modal__icon {
+      box-shadow: var(--glass-rim);
+    }
+
+    .appt,
+    .datebox {
+      background: var(--glass-thin);
+      border-color: var(--glass-edge);
+      box-shadow: var(--glass-rim);
+    }
+
+    .slot-chip {
+      border-radius: 999px;
+      background: var(--glass);
+      border-color: var(--glass-edge);
+      box-shadow: var(--glass-rim);
+    }
+
+    .slot-chip[aria-pressed='true'] {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%), var(--primary);
+      border-color: transparent;
+    }
+
+    .switch {
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.15);
+    }
+
+    .switch__thumb {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* tela inicial: cartões de vidro sobre o shader */
+    .quick__item {
+      border-radius: 20px;
+    }
+
+    .quick__item:hover {
+      background: var(--glass-sheen), var(--glass-strong);
+      box-shadow: var(--glass-rim), var(--glass-shadow-lg);
+    }
+
+    .quick__icon {
+      background: var(--glass-sheen), color-mix(in srgb, var(--accent) 14%, var(--glass-strong));
+    }
+
+    /* relógio da sidebar numa pastilha de vidro */
+    .sidebar__footer {
+      margin: auto 2px 2px;
+      padding: 12px 14px;
+      border-top: 0;
+      border-radius: 16px;
+      background: var(--glass-sheen), var(--glass-thin);
+      box-shadow: var(--glass-rim);
+    }
+
+    .sidebar.is-collapsed .sidebar__footer {
+      padding: 10px 0;
+    }
+
+    /* avisos: vidro com a cor do aviso por baixo */
+    .alert {
+      border-radius: 16px;
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      background: var(--glass-sheen), color-mix(in srgb, var(--primary-soft) 70%, transparent);
+      box-shadow: var(--glass-rim);
+    }
+
+    .alert--warning {
+      background: var(--glass-sheen), color-mix(in srgb, var(--warning-soft) 72%, transparent);
+    }
+
+    .alert--danger {
+      background: var(--glass-sheen), color-mix(in srgb, var(--danger-soft) 72%, transparent);
+    }
+
+    /* selos e especialidades em pílulas de vidro */
+    .badge,
+    .spec,
+    .nav__badge {
+      border-radius: 999px;
+      box-shadow: var(--glass-rim);
+    }
+
+    .spec {
+      padding: 0 10px;
+      background: var(--glass-sheen), var(--glass-strong);
+    }
+
+    .nav__badge {
+      background: var(--glass-sheen), var(--glass-strong);
+    }
+
+    /* avatar com brilho de lente */
+    .avatar {
+      background: var(--glass-sheen), color-mix(in srgb, var(--accent) 18%, var(--glass-strong));
+      box-shadow: var(--glass-rim), 0 4px 12px -6px rgba(47, 118, 210, 0.45);
+    }
+
+    /* cartões de pessoas sobem levemente e o vidro fica mais denso */
+    .person {
+      transition: box-shadow 0.25s var(--ease), background 0.25s, transform 0.3s var(--ease);
+    }
+
+    .person:hover {
+      transform: translateY(-2px);
+      background: var(--glass-sheen), var(--glass-strong);
+      box-shadow: var(--glass-rim), var(--glass-shadow-lg);
+    }
+
+    .stat__icon,
+    .modal__icon {
+      background: var(--glass-sheen), color-mix(in srgb, var(--accent) 16%, var(--glass-strong));
+    }
+  }
+}
